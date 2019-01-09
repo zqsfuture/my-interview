@@ -31,3 +31,105 @@ function A() {
 }
 ```
 - 你是否会疑惑，为什么函数 A 已经弹出调用栈了，为什么函数 B 还能引用到函数 A 中的变量。因为函数 A 中的变量这时候是存储在堆上的。现在的 JS 引擎可以通过逃逸分析辨别出哪些变量需要存储在堆上，哪些需要存储在栈上。
+### 七、vue中用computed简单实现数据的双向绑定（getter 和 setter）
+- 主要实现的效果：
+
+1. 改变 姓、名 两个输入框的内容时，姓-名、姓-名（双向绑定）这两个输入框内的值将会更新；
+
+2. 改变 姓-名 这个输入框中的内容时，姓、名输入框的内容不会更新；
+
+3. 改变 姓-名（双向绑定）这个输入框中的内容时，姓、名输入框的内容会同步更新（实现了数据的双向绑定，至于 姓-名 这个输入框中的内容改变了，那是因为 姓、名 这两个输入框导致的）。
+
+- 注意：
+1. getter 和 setter 只是一个概念，并不是两个实际的方法，
+
+2. getter对应的是get方法，即 获取对应的值 时候调用的回调函数
+
+3. setter对应的是set方法，即 监听对应的值的改变 时候调用的回调函数（注意：不是设置，不是设置，不是设置！！！）；并且 set 接受一个参数，即改变后的值。
+
+4. 计算属性（在使用get和set的时候）使用了箭头函数，则this不会指向这个组件的实例；如果你必须使用箭头函数，只有将其实例作为函数的第一个参数来访问 即： vm => vm.a * 2
+
+``` javascript
+<template>
+    <!-- computed 实现双向绑定 -->
+    <div class="twoWayBind">
+        <!-- 姓 -->
+        <p>
+            <span class="title">姓：</span>
+            <input type="text" class="firstName" v-model="firstName">            
+        </p>
+ 
+        <!-- 名 -->
+        <p>
+            <span class="title">名：</span>
+            <input type="text" class="lastName" v-model="lastName">
+        </p>       
+ 
+        <!-- 显示“姓-名”； 修改后姓、名输入框的内容不会更新 -->
+        <p>            
+            <span class="title">姓-名：</span>
+            <input type="text" class="fullName" v-model="fullName">
+            <span class="promptCon">显示“姓-名”； 修改后姓、名输入框的内容不会更新</span>
+        </p>
+ 
+        <!-- 显示“姓-名”； 修改后姓、名输入框的内容会同步更新 -->
+        <p>
+            <span class="title">姓-名（双向绑定）：</span>
+            <input type="text" class="fullName2" v-model="fullName2">
+            <span class="promptCon">显示“姓-名”； 修改后姓、名输入框的内容会同步更新</span>
+        </p>
+    </div>
+</template>
+ 
+<script>
+export default {
+    name: 'TwoWayBind',
+    data(){
+        return{
+            firstName: 'A',
+            lastName: 'B',
+        }
+    },
+    computed: {
+        fullName() {
+            return this.firstName + "-" + this.lastName;
+        },
+        fullName2: {
+            // 注意这里不能使用箭头函数，官网解释：计算属性使用了箭头函数，则this不会指向这个组件的实例，
+            //                      不过你仍然可以将其实例作为函数的第一个参数来访问  即： vm => vm.a * 2
+            get: function () {     
+                return this.firstName + "-" + this.lastName;
+            },
+            set: function (value){      //value为用户修改fullName2后的值
+                const names = value.split('-');
+                this.firstName = names[0];      //注意：这样修改了firstName和lastName的值，会导致fullName也跟着变化
+                this.lastName = names[1];
+            }
+        }
+    }
+}
+</script>
+ 
+<style lang="scss" scoped>
+.twoWayBind{
+    p{
+        margin: 10px 0px;
+        display: flex;
+        flex-direction: flex-start;
+        .title{
+            display: inline-block;
+            width: 150px;
+            text-align: center;
+        }        
+        input{
+            padding: 0px 6px;
+        }
+        .promptCon{
+            color: #aaa;
+            margin-left: 10px;
+        }
+    }
+}
+ 
+</style>
+```
