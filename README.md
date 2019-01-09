@@ -41,15 +41,12 @@ function A() {
 3. 改变 姓-名（双向绑定）这个输入框中的内容时，姓、名输入框的内容会同步更新（实现了数据的双向绑定，至于 姓-名 这个输入框中的内容改变了，那是因为 姓、名 这两个输入框导致的）。
 
 - 注意：
-1. getter 和 setter 只是一个概念，并不是两个实际的方法，
+1. getter 和 setter 只是一个概念，并不是两个实际的方法。
+2. getter对应的是get方法，即 获取对应的值 时候调用的回调函数。
+3. setter对应的是set方法，即 监听对应的值的改变 时候调用的回调函数（注意：不是设置，不是设置，不是设置！！！），并且 set 接受一个参数，即改变后的值。
+4. 计算属性（在使用get和set的时候）使用了箭头函数，则this不会指向这个组件的实例；如果你必须使用箭头函数，只有将其实例作为函数的第一个参数来访问 即： vm => vm.a * 2 。
 
-2. getter对应的是get方法，即 获取对应的值 时候调用的回调函数
-
-3. setter对应的是set方法，即 监听对应的值的改变 时候调用的回调函数（注意：不是设置，不是设置，不是设置！！！）；并且 set 接受一个参数，即改变后的值。
-
-4. 计算属性（在使用get和set的时候）使用了箭头函数，则this不会指向这个组件的实例；如果你必须使用箭头函数，只有将其实例作为函数的第一个参数来访问 即： vm => vm.a * 2
-
-``` javascript
+``` html
 <template>
     <!-- computed 实现双向绑定 -->
     <div class="twoWayBind">
@@ -80,8 +77,10 @@ function A() {
         </p>
     </div>
 </template>
- 
+```
+``` javascript
 <script>
+
 export default {
     name: 'TwoWayBind',
     data(){
@@ -108,8 +107,9 @@ export default {
         }
     }
 }
+```
 </script>
- 
+``` css
 <style lang="scss" scoped>
 .twoWayBind{
     p{
@@ -130,6 +130,5 @@ export default {
         }
     }
 }
- 
 </style>
 ```
