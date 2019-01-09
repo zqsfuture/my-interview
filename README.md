@@ -107,8 +107,9 @@ export default {
         }
     }
 }
-```
+
 </script>
+```
 ``` css
 <style lang="scss" scoped>
 .twoWayBind{
